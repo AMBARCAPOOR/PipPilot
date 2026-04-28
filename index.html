@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-S1EBTJ18P3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S1EBTJ18P3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-S1EBTJ18P3');
-</script>
+    gtag('config', 'G-S1EBTJ18P3');
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#080b10" />
@@ -470,10 +470,18 @@ const lotMult={standard:1,mini:.1,micro:.01,units:.00001};
 const lotUnits={standard:100000,mini:10000,micro:1000,units:1};
 let liveFeed={lastPrice:null,prevPrice:null,lastUpdate:null,nextNews:null,newsBlocked:false};
 function el(id){return document.getElementById(id)}
+function trackEvent(name, params = {}) {
+  if (typeof gtag === "function") {
+    gtag("event", name, {
+      app_name: "PipPilot",
+      ...params
+    });
+  }
+}
 function num(id){const v=parseFloat(el(id).value);return Number.isFinite(v)?v:0}
 function money(v){return (el('currency').value||'$')+(Number.isFinite(v)?v.toFixed(2):'—')}
 function fmt(v,d=2){return Number.isFinite(v)?v.toFixed(d):'—'}
-function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el('tab-'+id).classList.add('active');event.target.classList.add('active');if(id==='journal')renderJournal();if(id==='stats')renderStats()}
+function showTab(id){trackEvent("tab_opened", { tab_name: id });document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el('tab-'+id).classList.add('active');event.target.classList.add('active');if(id==='journal')renderJournal();if(id==='stats')renderStats()}
 function initPairs(){el('pairButtons').innerHTML=Object.keys(pairs).map(p=>`<button class="chip ${p===state.pair?'active':''}" onclick="setPair('${p}',this)">${p}</button>`).join('');updatePairWarnings()}
 function setPair(p,b){state.pair=p;document.querySelectorAll('#pairButtons .chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');updatePairWarnings();calculate(false)}
 function setLot(l){state.lot=l;['Micro','Mini','Standard','Units'].forEach(x=>el('lot'+x).classList.toggle('active',l===x.toLowerCase()));calculate(false)}
@@ -484,6 +492,7 @@ function customRR(btn){document.querySelectorAll('.rr-row .chip').forEach(x=>x.c
 function updatePairWarnings(){const p=state.pair,w=el('brokerWarn');el('jpyBox').style.display=p==='USDJPY'?'grid':'none';if(p==='USDJPY'){w.className='notice amber show';w.innerHTML='⚠️ USD/JPY pip value changes with price. Enter current USD/JPY rate for better sizing.'}else if(p==='XAUUSD'){w.className='notice amber show';w.innerHTML='⚠️ XAU/USD gold margin, contract size, and spread vary by broker. Verify before placing a trade.'}else{w.className='notice amber';w.innerHTML=''}}
 function applyJpyRate(){const r=num('jpyRate');if(r>0){pairs.USDJPY.pv=1000/r;el('jpyPipValue').value='$'+pairs.USDJPY.pv.toFixed(4)+'/pip/std lot';calculate()}}
 function calculate(show=true){
+  if (show) trackEvent("calculate_trade", { pair: state.pair, direction: state.dir, lot_type: state.lot });
   const p=pairs[state.pair], entry=num('entry'), stop=num('stop'), acct=num('accountSize'), riskPct=num('riskPctInput'), commission=num('commission'), buffer=num('bufferPips');
   if(state.mode==='auto' && el('customRRBox').style.display!=='none') state.rr=[num('rr1'),num('rr2'),num('rr3')];
   const stopCorrect=state.dir==='long'?stop<entry:stop>entry;
@@ -511,8 +520,8 @@ function calculate(show=true){
   updateGuru(checks, hardFail, softFail);
 }
 function checkNews(){const t=el('newsTime').value,w=el('newsWarn'),desc=el('newsDesc').value||'Red news';if(!t){w.className='notice';w.innerHTML='';return}const now=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));const [h,m]=t.split(':').map(Number);let diff=(h*60+m)-(now.getHours()*60+now.getMinutes());if(diff<0)diff+=1440;if(diff<=60){w.className='notice red show';w.innerHTML=`⛔ DO NOT TRADE — ${desc} in ${diff} min`;}else if(diff<=240){w.className='notice amber show';w.innerHTML=`⚠️ Caution — ${desc} in ${diff} min`;}else{w.className='notice green show';w.innerHTML=`✅ ${desc} outside 4h window`;}}
-function copyLevels(){if(!state.last)return calculate();const t=state.last;const txt=`${t.pair} ${t.dir.toUpperCase()}\nEntry: ${fmt(t.entry,t.dec)}\nSL: ${fmt(t.stop,t.dec)}\nTP1: ${fmt(t.targets[0].price,t.dec)}\nTP2: ${fmt(t.targets[1].price,t.dec)}\nTP3: ${fmt(t.targets[2].price,t.dec)}\nRisk: ${money(t.totalRisk)}\nSize: ${fmt(t.stdLots,4)} std / ${t.units} units`;navigator.clipboard.writeText(txt);alert('Copied trade levels.');}
-function logTrade(){if(!state.last)calculate();journal.push({...state.last});localStorage.setItem('forex_cockpit_pro_journal',JSON.stringify(journal));renderJournal();showTabById('journal')}
+function copyLevels(){trackEvent("copy_levels", { pair: state.pair });if(!state.last)return calculate();const t=state.last;const txt=`${t.pair} ${t.dir.toUpperCase()}\nEntry: ${fmt(t.entry,t.dec)}\nSL: ${fmt(t.stop,t.dec)}\nTP1: ${fmt(t.targets[0].price,t.dec)}\nTP2: ${fmt(t.targets[1].price,t.dec)}\nTP3: ${fmt(t.targets[2].price,t.dec)}\nRisk: ${money(t.totalRisk)}\nSize: ${fmt(t.stdLots,4)} std / ${t.units} units`;navigator.clipboard.writeText(txt);alert('Copied trade levels.');}
+function logTrade(){trackEvent("log_trade", { pair: state.pair, direction: state.dir });if(!state.last)calculate();journal.push({...state.last});localStorage.setItem('forex_cockpit_pro_journal',JSON.stringify(journal));renderJournal();showTabById('journal')}
 function showTabById(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el('tab-'+id).classList.add('active');document.querySelector(`.tab[onclick="showTab('${id}')"]`).classList.add('active')}
 async function saveApiKeysAndRefresh(){
   localStorage.setItem('forex_td_key',el('tdKey').value.trim());
@@ -619,7 +628,7 @@ function saveReplayNote(){const i=parseInt(el('replayIdx').value)-1;if(i<0||i>=j
 function nextReplay(){const current=parseInt(el('replayIdx').value)||0;el('replayIdx').value=Math.min(current+1,journal.length||1);loadReplay()}
 function renderStats(){const closed=journal.filter(t=>t.outcome);const wins=closed.filter(t=>t.pnl>0),losses=closed.filter(t=>t.pnl<0);const gp=wins.reduce((s,t)=>s+t.pnl,0),gl=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));const pnl=gp-gl;const exp=closed.length?pnl/closed.length:0;const pf=gl?gp/gl:gp?'∞':'—';el('statsGrid').innerHTML=[['Total',journal.length],['Closed',closed.length],['Wins',wins.length],['Losses',losses.length],['Win Rate',closed.length?Math.round(wins.length/closed.length*100)+'%':'—'],['Profit Factor',typeof pf==='number'?pf.toFixed(2):pf],['Expectancy',money(exp)],['Total P/L',money(pnl)]].map(([a,b])=>`<div class="stat"><div class="name">${a}</div><div class="value">${b}</div></div>`).join('');const by={};closed.forEach(t=>{by[t.pair]??={n:0,pnl:0,w:0,l:0};by[t.pair].n++;by[t.pair].pnl+=t.pnl;t.pnl>=0?by[t.pair].w++:by[t.pair].l++});el('pairStats').innerHTML=Object.keys(by).length?Object.entries(by).map(([p,d])=>`<div class="entry"><b>${p}</b> · ${d.n} trades · W:${d.w} L:${d.l} · <span class="${d.pnl>=0?'green':'red'}">${money(d.pnl)}</span></div>`).join(''):'<div class="muted">No closed trades yet.</div>'}
 function calcSwap(){const lots=num('swapLots'),days=num('swapDays'),rate=el('swapDir').value==='long'?num('swapLong'):num('swapShort'),mult=el('swapWed').value==='yes'?days+2:days,total=lots*rate*mult;el('swapResult').className='notice amber show';el('swapResult').innerHTML=`Estimated swap: <b class="${total>=0?'green':'red'}">${money(total)}</b> for ${mult} charged nights.`}
-function exportCSV(){if(!journal.length)return alert('No trades.');const rows=[['#','Date','Pair','Dir','Entry','SL','Risk','StdLots','Units','Outcome','PnL'],...journal.map((t,i)=>[i+1,t.date,t.pair,t.dir,t.entry,t.stop,t.totalRisk,t.stdLots,t.units,t.outcome||'Pending',t.pnl||0])];download('forex_journal.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv')}
+function exportCSV(){trackEvent("export_csv");if(!journal.length)return alert('No trades.');const rows=[['#','Date','Pair','Dir','Entry','SL','Risk','StdLots','Units','Outcome','PnL'],...journal.map((t,i)=>[i+1,t.date,t.pair,t.dir,t.entry,t.stop,t.totalRisk,t.stdLots,t.units,t.outcome||'Pending',t.pnl||0])];download('forex_journal.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv')}
 function exportJSON(){download('forex_journal.json',JSON.stringify(journal,null,2),'application/json')}
 function download(name,content,type){const a=document.createElement('a');a.href='data:'+type+';charset=utf-8,'+encodeURIComponent(content);a.download=name;a.click()}
 function clearJournal(){if(confirm('Clear all journal trades?')){journal=[];localStorage.setItem('forex_cockpit_pro_journal','[]');renderJournal()}}
