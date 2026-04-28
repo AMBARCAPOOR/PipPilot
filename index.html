@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#080b10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Forex Cockpit" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#080b10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Forex Cockpit" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>$€ Forex Trade Setup Assistant</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b10'/%3E%3Ccircle cx='32' cy='32' r='25' fill='%230b1f16' stroke='%2322c55e' stroke-width='3'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='38' font-weight='900' fill='%2322c55e'%3E$%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg:#080b10; --card:#111822; --card2:#172231; --line:#29384a;
+      --text:#f1f5fb; --muted:#94a3b8; --blue:#60a5fa; --purple:#a78bfa;
+      --green:#22c55e; --red:#ef4444; --amber:#f59e0b; --aqua:#22d3ee;
+      --greenBg:rgba(34,197,94,.12); --redBg:rgba(239,68,68,.12); --amberBg:rgba(245,158,11,.12);
+    }
+    .light { --bg:#f3f6fb; --card:#ffffff; --card2:#eef3f9; --line:#cbd5e1; --text:#0f172a; --muted:#64748b; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:radial-gradient(circle at top,#132033 0%,var(--bg) 42%); color:var(--text); font-family:Inter,Segoe UI,Arial,sans-serif; padding:14px; }
+    .wrap { max-width:980px; margin:0 auto; }
+    .card { background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)); border:1px solid var(--line); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:0 16px 36px rgba(0,0,0,.25); }
+    .header { display:flex; justify-content:space-between; gap:12px; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:12px; }
+    h1 { margin:0; font-size:24px; letter-spacing:-.04em; }
+    .sub { color:var(--muted); font-size:13px; line-height:1.45; margin-top:4px; }
+    .btn, button { border:1px solid var(--line); background:var(--card2); color:var(--text); border-radius:11px; padding:10px 12px; font-weight:800; cursor:pointer; }
+    .btn.primary { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#04111f; border:0; width:100%; font-size:15px; letter-spacing:.06em; }
+    .btn.good { background:var(--greenBg); color:var(--green); border-color:rgba(34,197,94,.45); }
+    .btn.bad { background:var(--redBg); color:var(--red); border-color:rgba(239,68,68,.45); }
+    .tabs { display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin-bottom:12px; }
+    .tab { font-size:12px; color:var(--muted); }
+    .tab.active { background:var(--blue); color:#04111f; border-color:var(--blue); }
+    .panel { display:none; } .panel.active { display:block; }
+    .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:12px; }
+    .span4{grid-column:span 4}.span6{grid-column:span 6}.span8{grid-column:span 8}.span12{grid-column:span 12}
+    .section { font-size:12px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:.11em; margin:8px 0 10px; display:flex; gap:8px; align-items:center; }
+    .section:after { content:""; height:1px; background:var(--line); flex:1; }
+    .form2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .form3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    label { display:block; color:var(--muted); font-size:12px; margin-bottom:5px; }
+    input,select,textarea { width:100%; background:var(--card2); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px; font-size:14px; outline:none; }
+    input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(96,165,250,.15); }
+    .clock { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .clock .box,.metric,.check,.result,.stat { background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .clock .box { text-align:center; } .clock .name,.metric .name,.stat .name { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; } .clock .val { margin-top:4px; font-weight:900; }
+    .open { border-color:rgba(34,197,94,.55)!important; background:var(--greenBg)!important; color:var(--green); }
+    .pair-row,.lot-row,.dir-row,.rr-row,.mode-row { display:grid; gap:7px; margin-bottom:10px; }
+    .pair-row{grid-template-columns:repeat(6,1fr)} .lot-row,.dir-row,.mode-row{grid-template-columns:repeat(2,1fr)} .rr-row{grid-template-columns:repeat(4,1fr)}
+    .chip.active { background:var(--blue); color:#04111f; border-color:var(--blue); }
+    .chip.buy.active { background:var(--greenBg); color:var(--green); border-color:var(--green); }
+    .chip.sell.active { background:var(--redBg); color:var(--red); border-color:var(--red); }
+    .notice { display:none; border-radius:12px; padding:10px 12px; font-size:13px; line-height:1.5; margin-bottom:10px; }
+    .notice.show { display:block; } .notice.red{background:var(--redBg);border:1px solid var(--red);color:var(--red)} .notice.amber{background:var(--amberBg);border:1px solid var(--amber);color:var(--amber)} .notice.green{background:var(--greenBg);border:1px solid var(--green);color:var(--green)}
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; } .metric .value,.stat .value { font-size:22px; font-weight:950; margin-top:6px; letter-spacing:-.04em; } .hint{color:var(--muted);font-size:11px;margin-top:5px;line-height:1.35}
+    .status { border-radius:16px; padding:15px; text-align:center; font-weight:950; font-size:18px; margin-bottom:10px; }
+    .status.ok{background:var(--greenBg);border:1px solid var(--green);color:var(--green)} .status.no{background:var(--redBg);border:1px solid var(--red);color:var(--red)} .status.warn{background:var(--amberBg);border:1px solid var(--amber);color:var(--amber)}
+    .checks { display:grid; gap:7px; } .check { display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:13px; }
+    .pill { border-radius:999px; padding:4px 8px; font-size:11px; font-weight:900; } .pass{background:var(--greenBg);color:var(--green)} .fail{background:var(--redBg);color:var(--red)} .caution{background:var(--amberBg);color:var(--amber)}
+    table { width:100%; border-collapse:collapse; font-size:13px; overflow:hidden; border-radius:12px; } th,td{padding:10px;border-bottom:1px solid var(--line);text-align:right} th:first-child,td:first-child{text-align:left} th{color:var(--muted);background:rgba(255,255,255,.04)} tr:last-child td{border-bottom:0}
+    .green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}.aqua{color:var(--aqua)}.muted{color:var(--muted)}
+    .journal-list{display:grid;gap:9px;max-height:420px;overflow:auto}.entry{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13px}.entry-head{display:flex;justify-content:space-between;font-weight:900;margin-bottom:6px}.entry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;color:var(--muted)}.entry-grid span{color:var(--text);font-weight:800}
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .lux-footer {
+      position:relative;
+      overflow:hidden;
+      text-align:center;
+      padding:22px 18px;
+      border-color:rgba(245,158,11,.35);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(245,158,11,.16), transparent 42%),
+        linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+    }
+    .lux-footer:before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, transparent, rgba(245,158,11,.16), transparent);
+      transform:translateX(-100%);
+      animation:footerSheen 5s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes footerSheen { 0%,55%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+    .lux-brand {
+      position:relative;
+      font-weight:950;
+      font-size:17px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#f7d774;
+      text-shadow:0 0 18px rgba(245,158,11,.35);
+      margin-bottom:8px;
+    }
+    .lux-brand span { color:var(--green); text-shadow:0 0 18px rgba(34,197,94,.35); }
+    .lux-sub {
+      position:relative;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+    .lux-motto {
+      position:relative;
+      margin-top:10px;
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.12em;
+    }
+    .lux-dot { color:#f7d774; padding:0 8px; }
+    .guru-panel {
+      border:1px solid rgba(245,158,11,.38);
+      background:linear-gradient(135deg, rgba(245,158,11,.10), rgba(34,197,94,.05));
+    }
+    .guru-voice {
+      font-size:16px;
+      line-height:1.6;
+      font-weight:850;
+      color:var(--text);
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+    }
+    .preset-row { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:10px; }
+    .replay-card { border-left:4px solid var(--blue); }
+    .api-placeholder {
+      border:1px dashed rgba(96,165,250,.45);
+      background:rgba(96,165,250,.06);
+      border-radius:14px;
+      padding:12px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+    .live-panel {
+      border:1px solid rgba(34,211,238,.35);
+      background:linear-gradient(135deg, rgba(34,211,238,.08), rgba(96,165,250,.04));
+    }
+    .price-tape {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    .price-box {
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      text-align:center;
+    }
+    .price-box .big {
+      font-size:22px;
+      font-weight:950;
+      letter-spacing:-.04em;
+      margin-top:5px;
+    }
+    .key-row { display:grid; grid-template-columns:1fr 1fr auto; gap:10px; align-items:end; }
+    @media(max-width:700px){.price-tape,.key-row{grid-template-columns:1fr}}
+    @media(max-width:820px){.span4,.span6,.span8{grid-column:span 12}.form2,.form3,.metrics,.stats,.clock{grid-template-columns:1fr 1fr}.pair-row{grid-template-columns:repeat(3,1fr)}.rr-row{grid-template-columns:repeat(2,1fr)}.tabs{grid-template-columns:repeat(4,1fr)}h1{font-size:20px}}
+    @media(max-width:520px){body{padding:10px}.grid{gap:10px}.form2,.form3,.metrics,.stats,.clock{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(3,1fr)}.pair-row,.rr-row{grid-template-columns:1fr 1fr}.entry-grid{grid-template-columns:1fr}th,td{font-size:11px;padding:7px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="header">
+      <div>
+        <h1>⚡ Forex Trade Cockpit Pro</h1>
+        <div class="sub">Pre-trade calculator + risk guardrails + session/news cockpit + journal + stats. Educational only. Verify all broker values before placing a trade.</div>
+      </div>
+      <button onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+    <div class="clock">
+      <div class="box"><div class="name">LA / PST</div><div class="val" id="pstTime">--:--</div></div>
+      <div class="box" id="asiaBox"><div class="name">Asia</div><div class="val" id="asiaStatus">--</div></div>
+      <div class="box" id="lonBox"><div class="name">London</div><div class="val" id="lonStatus">--</div></div>
+      <div class="box" id="nyBox"><div class="name">New York</div><div class="val" id="nyStatus">--</div></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('calc')">📐 Calc</button>
+    <button class="tab" onclick="showTab('guru')">🧘 Guru</button>
+    <button class="tab" onclick="showTab('journal')">📋 Journal</button>
+    <button class="tab" onclick="showTab('stats')">📊 Stats</button>
+    <button class="tab" onclick="showTab('replay')">🎬 Replay</button>
+    <button class="tab" onclick="showTab('swap')">💱 Swap</button>
+    <button class="tab" onclick="showTab('guide')">📖 Guide</button>
+  </div>
+
+  <section class="panel active" id="tab-calc">
+    <div class="card live-panel">
+      <div class="section">Live EUR/USD + Market News</div>
+      <div class="key-row">
+        <div><label>Twelve Data API Key — live forex price</label><input id="tdKey" type="password" placeholder="Paste Twelve Data key"></div>
+        <div><label>Finnhub API Key — economic calendar</label><input id="fhKey" type="password" placeholder="Paste Finnhub key"></div>
+        <button onclick="saveApiKeysAndRefresh()">Save + Refresh</button>
+      </div>
+      <div class="price-tape">
+        <div class="price-box"><div class="name">EUR/USD Live</div><div class="big aqua" id="livePrice">—</div><div class="hint" id="liveTime">No feed connected</div></div>
+        <div class="price-box"><div class="name">1m / Feed Bias</div><div class="big" id="liveBias">—</div><div class="hint">Helper only, not a signal</div></div>
+        <div class="price-box"><div class="name">Next EUR/USD News</div><div class="big amber" id="nextNewsTime">—</div><div class="hint" id="nextNewsName">Manual fallback below</div></div>
+        <div class="price-box"><div class="name">News Lockout</div><div class="big" id="newsLockout">—</div><div class="hint">Blocks within 60 min</div></div>
+      </div>
+      <div id="apiStatus" class="notice amber" style="margin-top:10px"></div>
+    </div>
+    <div class="grid">
+      <div class="card span4">
+        <div class="section">Account Risk Rules</div>
+        <div class="preset-row">
+          <button class="chip" onclick="applyPreset('personal')">Personal</button>
+          <button class="chip" onclick="applyPreset('ftmo10k')">FTMO 10K</button>
+          <button class="chip" onclick="applyPreset('ftmo25k')">FTMO 25K</button>
+          <button class="chip" onclick="applyPreset('onepercent')">1% Rule</button>
+        </div>
+        <div class="form2">
+          <div><label>Account Size</label><input id="accountSize" type="number" value="2000" step="0.01"></div>
+          <div><label>Risk Currency</label><select id="currency"><option>$</option><option>€</option><option>£</option><option>¥</option></select></div>
+          <div><label>Planned Risk %</label><input id="riskPctInput" type="number" value="1" step="0.1"></div>
+          <div><label>Commission / Fees</label><input id="commission" type="number" value="0" step="0.01"></div>
+          <div><label>Max Loss Per Trade</label><input id="maxTradeLoss" type="number" value="40" step="0.01"></div>
+          <div><label>Max Loss Per Day</label><input id="maxDayLoss" type="number" value="100" step="0.01"></div>
+          <div><label>Loss Already Today</label><input id="lossToday" type="number" value="0" step="0.01"></div>
+          <div><label>Max Account Drawdown</label><input id="maxAccountLoss" type="number" value="200" step="0.01"></div>
+          <div><label>Max Trades Per Day</label><input id="maxTradesDay" type="number" value="2" step="1"></div>
+          <div><label>Trades Taken Today</label><input id="tradesToday" type="number" value="0" step="1"></div>
+        </div>
+      </div>
+
+      <div class="card span8">
+        <div class="section">Pair + Trade Setup</div>
+        <div class="pair-row" id="pairButtons"></div>
+        <div class="notice amber" id="brokerWarn"></div>
+        <div class="form3" id="jpyBox" style="display:none;margin-bottom:10px">
+          <div><label>Current USD/JPY Rate</label><input id="jpyRate" type="number" placeholder="150.00" step="0.01"></div>
+          <div><label>Calculated Std Pip Value</label><input id="jpyPipValue" readonly></div>
+          <div><label>Action</label><button onclick="applyJpyRate()">Update JPY Pip Value</button></div>
+        </div>
+        <div class="lot-row">
+          <button class="chip active" id="lotMicro" onclick="setLot('micro')">Micro<br><small>1,000 units</small></button>
+          <button class="chip" id="lotMini" onclick="setLot('mini')">Mini<br><small>10,000 units</small></button>
+        </div>
+        <div class="lot-row">
+          <button class="chip" id="lotStandard" onclick="setLot('standard')">Standard<br><small>100,000 units</small></button>
+          <button class="chip" id="lotUnits" onclick="setLot('units')">Units<br><small>Exact units</small></button>
+        </div>
+        <div class="dir-row">
+          <button class="chip buy active" id="buyBtn" onclick="setDir('long')">▲ BUY / LONG</button>
+          <button class="chip sell" id="sellBtn" onclick="setDir('short')">▼ SELL / SHORT</button>
+        </div>
+        <div class="mode-row">
+          <button class="chip active" id="modeAuto" onclick="setMode('auto')">Auto R Targets</button>
+          <button class="chip" id="modeManual" onclick="setMode('manual')">Manual TP Prices</button>
+        </div>
+        <div class="form3">
+          <div><label>Entry Price</label><input id="entry" type="number" value="1.17000" step="0.00001"></div>
+          <div><label>Stop Loss</label><input id="stop" type="number" value="1.16850" step="0.00001"></div>
+          <div><label>Spread / Slippage Buffer Pips</label><input id="bufferPips" type="number" value="0.5" step="0.1"></div>
+        </div>
+        <div class="section">Target Structure</div>
+        <div id="autoTargets">
+          <div class="rr-row">
+            <button class="chip active" onclick="setRR(1.5,3,5,this)">1.5 / 3 / 5R</button>
+            <button class="chip" onclick="setRR(1,2,3,this)">1 / 2 / 3R</button>
+            <button class="chip" onclick="setRR(2,4,6,this)">2 / 4 / 6R</button>
+            <button class="chip" onclick="customRR(this)">Custom R</button>
+          </div>
+          <div class="form3" id="customRRBox" style="display:none">
+            <div><label>TP1 R</label><input id="rr1" type="number" value="1.5" step="0.1"></div>
+            <div><label>TP2 R</label><input id="rr2" type="number" value="3" step="0.1"></div>
+            <div><label>TP3 R</label><input id="rr3" type="number" value="5" step="0.1"></div>
+          </div>
+        </div>
+        <div class="form3" id="manualTargets" style="display:none">
+          <div><label>TP1 Price</label><input id="tp1" type="number" value="1.17200" step="0.00001"></div>
+          <div><label>TP2 Price</label><input id="tp2" type="number" value="1.17300" step="0.00001"></div>
+          <div><label>TP3 Price</label><input id="tp3" type="number" value="1.17450" step="0.00001"></div>
+        </div>
+        <div style="margin-top:12px"><button class="btn primary" onclick="calculate()">⚡ CALCULATE TRADE</button></div>
+      </div>
+
+      <div class="card span8">
+        <div class="section">Trade Dashboard</div>
+        <div class="metrics">
+          <div class="metric"><div class="name">Stop Distance</div><div class="value" id="mStop">—</div><div class="hint">Including buffer</div></div>
+          <div class="metric"><div class="name">Risk Amount</div><div class="value amber" id="mRisk">—</div><div class="hint">Planned risk + fees</div></div>
+          <div class="metric"><div class="name">Risk %</div><div class="value" id="mRiskPct">—</div><div class="hint">Risk ÷ account</div></div>
+          <div class="metric"><div class="name">Position Size</div><div class="value aqua" id="mSize">—</div><div class="hint" id="mSizeHint">Suggested</div></div>
+        </div>
+        <div class="section">Targets + R:R</div>
+        <table>
+          <thead><tr><th>Target</th><th>Price</th><th>Pips</th><th>R:R</th><th>Profit</th><th>Action</th></tr></thead>
+          <tbody id="targetRows"><tr><td colspan="6" class="muted">Press Calculate.</td></tr></tbody>
+        </table>
+        <div class="section">Break-Even / Trade Management</div>
+        <div class="metrics">
+          <div class="metric"><div class="name">Move SL to BE</div><div class="value" id="mBE">—</div><div class="hint">Usually after TP1</div></div>
+          <div class="metric"><div class="name">Remaining After TP1</div><div class="value" id="mRemain">—</div><div class="hint">If 50% closed</div></div>
+          <div class="metric"><div class="name">Locked Profit</div><div class="value green" id="mLocked">—</div><div class="hint">After TP1 only</div></div>
+          <div class="metric"><div class="name">Units</div><div class="value" id="mUnits">—</div><div class="hint">Broker order size</div></div>
+        </div>
+        <div class="form2" style="margin-top:12px">
+          <button onclick="copyLevels()">📋 Copy Levels</button>
+          <button class="btn good" onclick="logTrade()">📋 Log Trade</button>
+        </div>
+      </div>
+
+      <div class="card span4">
+        <div class="section">Go / No-Go Guardrails</div>
+        <div id="mainStatus" class="status warn">Enter trade details</div>
+        <div class="checks" id="checks"></div>
+        <div class="section">News Warning</div>
+        <div class="form2">
+          <div><label>Red News Time PST</label><input type="time" id="newsTime"></div>
+          <div><label>Event</label><input id="newsDesc" placeholder="FOMC, NFP, CPI"></div>
+        </div>
+        <div id="newsWarn" class="notice"></div>
+        <div class="section">Pre-Trade Checklist</div>
+        <div class="checks" id="manualChecks">
+          <label class="check"><span><input type="checkbox" class="precheck"> No red news within 60 min</span><span class="pill caution">manual</span></label>
+          <label class="check"><span><input type="checkbox" class="precheck"> Session matches plan</span><span class="pill caution">manual</span></label>
+          <label class="check"><span><input type="checkbox" class="precheck"> Direction matches bias</span><span class="pill caution">manual</span></label>
+          <label class="check"><span><input type="checkbox" class="precheck"> Stop is logical, not random</span><span class="pill caution">manual</span></label>
+          <label class="check"><span><input type="checkbox" class="precheck"> I accept the loss before entry</span><span class="pill caution">manual</span></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-guru">
+    <div class="card guru-panel">
+      <div class="section">Guru Discipline Mode</div>
+      <div id="guruVoice" class="guru-voice">Calculate a trade first. Guru mode will call out the obvious mistake before your emotions do.</div>
+      <div class="section">Discipline Score</div>
+      <div class="metrics">
+        <div class="metric"><div class="name">Risk Score</div><div class="value" id="gRisk">—</div><div class="hint">Risk and loss limits</div></div>
+        <div class="metric"><div class="name">Structure Score</div><div class="value" id="gStruct">—</div><div class="hint">SL/TP logic</div></div>
+        <div class="metric"><div class="name">Behavior Score</div><div class="value" id="gBehavior">—</div><div class="hint">Daily limits + checklist</div></div>
+        <div class="metric"><div class="name">Final Grade</div><div class="value" id="gGrade">—</div><div class="hint">A/B/C/F</div></div>
+      </div>
+      <div class="section">What Guru Checks</div>
+      <div class="checks" id="guruChecks"></div>
+    </div>
+    <div class="card">
+      <div class="section">Live Feed / Calendar Hooks</div>
+      <div class="api-placeholder">
+        <b>API hooks are now active:</b> add a Twelve Data key for live EUR/USD and a Finnhub key for economic calendar checks. The manual red-news box remains as backup because free APIs can lag, fail, or miss broker-specific events.
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-journal">
+    <div class="card">
+      <div class="section">Journal</div>
+      <div class="metrics">
+        <div class="metric"><div class="name">Trades</div><div class="value" id="jTrades">0</div></div>
+        <div class="metric"><div class="name">Closed</div><div class="value" id="jClosed">0</div></div>
+        <div class="metric"><div class="name">Win Rate</div><div class="value" id="jWinRate">—</div></div>
+        <div class="metric"><div class="name">Total P/L</div><div class="value" id="jPnL">$0</div></div>
+      </div>
+      <div class="section">Mark Outcome</div>
+      <div class="form3">
+        <div><label>Trade #</label><input id="outcomeIdx" type="number" min="1" placeholder="1"></div>
+        <div><label>Outcome</label><select id="outcome"><option value="tp1">TP1</option><option value="tp2">TP2</option><option value="tp3">TP3</option><option value="be">Break-even</option><option value="sl">SL Hit</option></select></div>
+        <div><label>Action</label><button onclick="markOutcome()">Mark</button></div>
+      </div>
+      <div class="form3" style="margin-top:10px">
+        <button onclick="exportCSV()">Export CSV</button><button onclick="exportJSON()">Export JSON</button><button class="btn bad" onclick="clearJournal()">Clear</button>
+      </div>
+      <div class="section">Trades</div>
+      <div class="journal-list" id="journalList"><div class="muted">No trades logged.</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-stats">
+    <div class="card">
+      <div class="section">Performance Stats</div>
+      <div class="stats" id="statsGrid"></div>
+      <div class="section">By Pair</div>
+      <div id="pairStats" class="journal-list"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-replay">
+    <div class="card">
+      <div class="section">Trade Replay / Review Mode</div>
+      <div class="sub" style="margin-bottom:12px">Review logged trades one by one. This is for learning pattern recognition and discipline, not changing past results.</div>
+      <div class="form3">
+        <div><label>Replay Trade #</label><input id="replayIdx" type="number" min="1" placeholder="1"></div>
+        <div><label>Action</label><button onclick="loadReplay()">Load Replay</button></div>
+        <div><label>Journal Size</label><input id="replayCount" readonly></div>
+      </div>
+      <div class="section">Replay Card</div>
+      <div id="replayCard" class="entry replay-card muted">No replay loaded.</div>
+      <div class="section">Review Notes</div>
+      <textarea id="replayNotes" rows="5" placeholder="What did I see? Did I follow rules? What would I do differently?"></textarea>
+      <div class="form2" style="margin-top:10px">
+        <button onclick="saveReplayNote()">Save Note To Trade</button>
+        <button onclick="nextReplay()">Next Trade →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-swap">
+    <div class="card">
+      <div class="section">Overnight Swap Estimator</div>
+      <div class="form3">
+        <div><label>Position Size — Standard Lots</label><input id="swapLots" type="number" step="0.001" placeholder="0.02"></div>
+        <div><label>Days Held</label><input id="swapDays" type="number" value="1" step="1"></div>
+        <div><label>Includes Wednesday?</label><select id="swapWed"><option value="no">No</option><option value="yes">Yes — triple swap</option></select></div>
+      </div>
+      <div class="form3" style="margin-top:10px">
+        <div><label>Swap Long $/lot/night</label><input id="swapLong" type="number" step="0.01" placeholder="-6.50"></div>
+        <div><label>Swap Short $/lot/night</label><input id="swapShort" type="number" step="0.01" placeholder="2.10"></div>
+        <div><label>Direction</label><select id="swapDir"><option value="long">Long</option><option value="short">Short</option></select></div>
+      </div>
+      <div style="margin-top:12px"><button class="btn primary" onclick="calcSwap()">Calculate Swap</button></div>
+      <div id="swapResult" class="notice amber" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-guide">
+    <div class="card">
+      <div class="section">Quick Guide</div>
+      <div class="sub" style="font-size:14px;line-height:1.8">
+        <b class="aqua">Quick Calculator Mode:</b> choose Manual TP Prices when you already know entry, SL, and TP1/TP2/TP3.<br>
+        <b class="aqua">Strategy Mode:</b> choose Auto R Targets when you want the tool to create TP levels from your stop distance.<br>
+        <b class="green">Beginner rule:</b> risk 1% or less until you have a proven sample size.<br>
+        <b class="amber">USD/JPY:</b> pip value changes with price. Enter the current USD/JPY rate before calculating.<br>
+        <b class="amber">XAU/USD:</b> gold margin and pip math vary heavily by broker. Verify contract specs before trading.<br>
+        <b class="red">Hard stop:</b> if the tool says NO TRADE because of risk limits, reduce size, widen account buffer, or skip the trade.<br>
+        <b class="aqua">New:</b> Guru mode grades the trade before you enter, prop presets auto-fill common challenge rules, and Replay mode lets you review logged setups later.
+      </div>
+    </div>
+  </section>
+</div>
+
+  <div class="card lux-footer">
+    <div class="lux-brand"><span>$</span> Laxmi The Canny Trader <span>€</span></div>
+    <div class="lux-sub">Free forever <span class="lux-dot">·</span> Not financial advice <span class="lux-dot">·</span> Verify with your broker</div>
+    <div class="lux-motto">Discipline → Consistency → Profit</div>
+  </div>
+
+<script>
+let state={pair:'EURUSD',dir:'long',lot:'micro',mode:'auto',rr:[1.5,3,5],last:null,light:false};
+let journal=JSON.parse(localStorage.getItem('forex_cockpit_pro_journal')||'[]');
+const pairs={
+  EURUSD:{pip:0.0001,pv:10,dec:5,min:8,max:60,note:'Major pair. Standard lot usually ≈ $10/pip with USD account.'},
+  GBPUSD:{pip:0.0001,pv:10,dec:5,min:10,max:75,note:'More volatile than EUR/USD. Watch spread around news.'},
+  AUDUSD:{pip:0.0001,pv:10,dec:5,min:8,max:60,note:'Good Asia/London pair. Standard lot usually ≈ $10/pip.'},
+  NZDUSD:{pip:0.0001,pv:10,dec:5,min:8,max:60,note:'Standard USD-quoted pair. Verify broker pip value.'},
+  USDJPY:{pip:0.01,pv:6.67,dec:3,min:8,max:60,note:'JPY pip value varies. Use current rate calculator.'},
+  XAUUSD:{pip:0.1,pv:10,dec:2,min:100,max:650,note:'Gold has large stops and higher margin. Broker specs vary.'}
+};
+const lotMult={standard:1,mini:.1,micro:.01,units:.00001};
+const lotUnits={standard:100000,mini:10000,micro:1000,units:1};
+let liveFeed={lastPrice:null,prevPrice:null,lastUpdate:null,nextNews:null,newsBlocked:false};
+function el(id){return document.getElementById(id)}
+function num(id){const v=parseFloat(el(id).value);return Number.isFinite(v)?v:0}
+function money(v){return (el('currency').value||'$')+(Number.isFinite(v)?v.toFixed(2):'—')}
+function fmt(v,d=2){return Number.isFinite(v)?v.toFixed(d):'—'}
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el('tab-'+id).classList.add('active');event.target.classList.add('active');if(id==='journal')renderJournal();if(id==='stats')renderStats()}
+function initPairs(){el('pairButtons').innerHTML=Object.keys(pairs).map(p=>`<button class="chip ${p===state.pair?'active':''}" onclick="setPair('${p}',this)">${p}</button>`).join('');updatePairWarnings()}
+function setPair(p,b){state.pair=p;document.querySelectorAll('#pairButtons .chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');updatePairWarnings();calculate(false)}
+function setLot(l){state.lot=l;['Micro','Mini','Standard','Units'].forEach(x=>el('lot'+x).classList.toggle('active',l===x.toLowerCase()));calculate(false)}
+function setDir(d){state.dir=d;el('buyBtn').classList.toggle('active',d==='long');el('sellBtn').classList.toggle('active',d==='short');calculate(false)}
+function setMode(m){state.mode=m;el('modeAuto').classList.toggle('active',m==='auto');el('modeManual').classList.toggle('active',m==='manual');el('autoTargets').style.display=m==='auto'?'block':'none';el('manualTargets').style.display=m==='manual'?'grid':'none';calculate(false)}
+function setRR(a,b,c,btn){state.rr=[a,b,c];el('customRRBox').style.display='none';document.querySelectorAll('.rr-row .chip').forEach(x=>x.classList.remove('active'));btn.classList.add('active');calculate(false)}
+function customRR(btn){document.querySelectorAll('.rr-row .chip').forEach(x=>x.classList.remove('active'));btn.classList.add('active');el('customRRBox').style.display='grid'}
+function updatePairWarnings(){const p=state.pair,w=el('brokerWarn');el('jpyBox').style.display=p==='USDJPY'?'grid':'none';if(p==='USDJPY'){w.className='notice amber show';w.innerHTML='⚠️ USD/JPY pip value changes with price. Enter current USD/JPY rate for better sizing.'}else if(p==='XAUUSD'){w.className='notice amber show';w.innerHTML='⚠️ XAU/USD gold margin, contract size, and spread vary by broker. Verify before placing a trade.'}else{w.className='notice amber';w.innerHTML=''}}
+function applyJpyRate(){const r=num('jpyRate');if(r>0){pairs.USDJPY.pv=1000/r;el('jpyPipValue').value='$'+pairs.USDJPY.pv.toFixed(4)+'/pip/std lot';calculate()}}
+function calculate(show=true){
+  const p=pairs[state.pair], entry=num('entry'), stop=num('stop'), acct=num('accountSize'), riskPct=num('riskPctInput'), commission=num('commission'), buffer=num('bufferPips');
+  if(state.mode==='auto' && el('customRRBox').style.display!=='none') state.rr=[num('rr1'),num('rr2'),num('rr3')];
+  const stopCorrect=state.dir==='long'?stop<entry:stop>entry;
+  const rawStop=Math.abs(entry-stop)/p.pip; const stopPips=rawStop+buffer;
+  const plannedRisk=acct*riskPct/100; const totalRisk=plannedRisk+commission; const netRisk=Math.max(plannedRisk-commission,0);
+  const stdLots=stopPips>0&&p.pv>0?netRisk/(stopPips*p.pv):0; const miniLots=stdLots*10, microLots=stdLots*100, units=Math.round(stdLots*100000);
+  let displaySize=state.lot==='standard'?stdLots:state.lot==='mini'?miniLots:state.lot==='micro'?microLots:units;
+  const dir=state.dir==='long'?1:-1;
+  let targets;
+  if(state.mode==='auto') targets=state.rr.map(r=>({r,price:entry+dir*Math.abs(entry-stop)*r}));
+  else targets=[num('tp1'),num('tp2'),num('tp3')].map(price=>({price,r:stopPips>0?Math.abs(price-entry)/p.pip/stopPips:0}));
+  el('mStop').textContent=fmt(stopPips,1)+' pips'; el('mRisk').textContent=money(totalRisk); el('mRiskPct').textContent=fmt(acct?totalRisk/acct*100:0,2)+'%';
+  el('mSize').textContent=state.lot==='units'?displaySize.toLocaleString():fmt(displaySize, state.lot==='standard'?4:2); el('mSizeHint').textContent=state.lot==='units'?'exact units':state.lot+' lots'; el('mUnits').textContent=units.toLocaleString();
+  const targetRows=targets.map((t,i)=>{const valid=state.dir==='long'?t.price>entry:t.price<entry;const pips=valid?Math.abs(t.price-entry)/p.pip:NaN;const rr=valid&&stopPips>0?pips/stopPips:NaN;const profit=valid?pips*p.pv*stdLots:NaN;const cls=rr>=2?'green':rr>=1?'amber':'red';return `<tr><td>TP${i+1}</td><td>${fmt(t.price,p.dec)}</td><td>${fmt(pips,1)}</td><td class="${cls}">${fmt(rr,2)}R</td><td class="green">${money(profit)}</td><td>${i===0?'Close 50%':i===1?'Close 25%':'Runner 25%'}</td></tr>`}).join('');
+  el('targetRows').innerHTML=targetRows||'<tr><td colspan="6">—</td></tr>';
+  const tp1Profit=(Number.isFinite(targets[0]?.price)?Math.abs(targets[0].price-entry)/p.pip*p.pv*stdLots*.5:0); el('mBE').textContent=fmt(entry,p.dec); el('mRemain').textContent=fmt(stdLots*.5,4)+' std lots'; el('mLocked').textContent=money(tp1Profit);
+  const remainingDay=num('maxDayLoss')-num('lossToday'); const checks=[
+    ['Stop is on correct side',stopCorrect],['Stop distance is valid',stopPips>0],['Risk ≤ max loss per trade',totalRisk<=num('maxTradeLoss')],['Risk ≤ remaining daily loss',totalRisk<=remainingDay],['Risk ≤ max account drawdown rule',totalRisk<=num('maxAccountLoss')],['Risk ≤ 2% beginner ceiling',(acct?totalRisk/acct*100:999)<=2],['Trades today below max',num('tradesToday')<num('maxTradesDay')],['TP1 is at least 1R',targets[0]&&Math.abs(targets[0].price-entry)/p.pip/stopPips>=1],['No API red-news lockout',!liveFeed.newsBlocked]
+  ];
+  el('checks').innerHTML=checks.map(([t,ok])=>`<div class="check"><span>${t}</span><span class="pill ${ok?'pass':'fail'}">${ok?'PASS':'FAIL'}</span></div>`).join('');
+  const hardFail=checks.slice(0,5).some(x=>!x[1])||!checks[6][1]||!checks[8][1]; const softFail=checks.some(x=>!x[1]);
+  el('mainStatus').className='status '+(hardFail?'no':softFail?'warn':'ok'); el('mainStatus').textContent=hardFail?'⛔ NO TRADE — rule violation':softFail?'⚠️ CAUTION — review setup':'✅ TRADE ALLOWED';
+  checkNews();
+  state.last={id:Date.now(),date:new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}),pair:state.pair,dir:state.dir,entry,stop,targets,stopPips,totalRisk,plannedRisk,commission,riskPct:acct?totalRisk/acct*100:0,stdLots,miniLots,microLots,units,mode:state.mode,outcome:null,pnl:0,dec:p.dec,notes:''};
+  updateGuru(checks, hardFail, softFail);
+}
+function checkNews(){const t=el('newsTime').value,w=el('newsWarn'),desc=el('newsDesc').value||'Red news';if(!t){w.className='notice';w.innerHTML='';return}const now=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));const [h,m]=t.split(':').map(Number);let diff=(h*60+m)-(now.getHours()*60+now.getMinutes());if(diff<0)diff+=1440;if(diff<=60){w.className='notice red show';w.innerHTML=`⛔ DO NOT TRADE — ${desc} in ${diff} min`;}else if(diff<=240){w.className='notice amber show';w.innerHTML=`⚠️ Caution — ${desc} in ${diff} min`;}else{w.className='notice green show';w.innerHTML=`✅ ${desc} outside 4h window`;}}
+function copyLevels(){if(!state.last)return calculate();const t=state.last;const txt=`${t.pair} ${t.dir.toUpperCase()}\nEntry: ${fmt(t.entry,t.dec)}\nSL: ${fmt(t.stop,t.dec)}\nTP1: ${fmt(t.targets[0].price,t.dec)}\nTP2: ${fmt(t.targets[1].price,t.dec)}\nTP3: ${fmt(t.targets[2].price,t.dec)}\nRisk: ${money(t.totalRisk)}\nSize: ${fmt(t.stdLots,4)} std / ${t.units} units`;navigator.clipboard.writeText(txt);alert('Copied trade levels.');}
+function logTrade(){if(!state.last)calculate();journal.push({...state.last});localStorage.setItem('forex_cockpit_pro_journal',JSON.stringify(journal));renderJournal();showTabById('journal')}
+function showTabById(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el('tab-'+id).classList.add('active');document.querySelector(`.tab[onclick="showTab('${id}')"]`).classList.add('active')}
+async function saveApiKeysAndRefresh(){
+  localStorage.setItem('forex_td_key',el('tdKey').value.trim());
+  localStorage.setItem('forex_fh_key',el('fhKey').value.trim());
+  await refreshLivePrice();
+  await refreshEconomicCalendar();
+  calculate(false);
+}
+async function refreshLivePrice(){
+  const key=(el('tdKey')?.value||localStorage.getItem('forex_td_key')||'').trim();
+  const status=el('apiStatus');
+  if(!key){status.className='notice amber show';status.innerHTML='Paste a Twelve Data API key to enable live EUR/USD price.';return;}
+  try{
+    const url=`https://api.twelvedata.com/price?symbol=EUR/USD&apikey=${encodeURIComponent(key)}`;
+    const r=await fetch(url); const data=await r.json();
+    if(data.status==='error'||!data.price) throw new Error(data.message||'No price returned');
+    liveFeed.prevPrice=liveFeed.lastPrice;
+    liveFeed.lastPrice=parseFloat(data.price);
+    liveFeed.lastUpdate=new Date();
+    el('livePrice').textContent=liveFeed.lastPrice.toFixed(5);
+    el('liveTime').textContent='Updated '+liveFeed.lastUpdate.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    if(liveFeed.prevPrice){
+      const diff=liveFeed.lastPrice-liveFeed.prevPrice;
+      el('liveBias').textContent=diff>0?'▲ Up':diff<0?'▼ Down':'Flat';
+      el('liveBias').className='big '+(diff>0?'green':diff<0?'red':'amber');
+    } else { el('liveBias').textContent='Live'; el('liveBias').className='big aqua'; }
+    status.className='notice green show'; status.innerHTML='✅ Live EUR/USD price updated.';
+  }catch(err){status.className='notice red show';status.innerHTML='Live price error: '+err.message;}
+}
+async function refreshEconomicCalendar(){
+  const key=(el('fhKey')?.value||localStorage.getItem('forex_fh_key')||'').trim();
+  if(!key){el('nextNewsTime').textContent='—';el('nextNewsName').textContent='Paste Finnhub key for auto news';el('newsLockout').textContent='Manual';el('newsLockout').className='big amber';liveFeed.newsBlocked=false;return;}
+  try{
+    const now=new Date();
+    const today=now.toISOString().slice(0,10);
+    const tomorrow=new Date(now.getTime()+86400000).toISOString().slice(0,10);
+    const url=`https://finnhub.io/api/v1/calendar/economic?from=${today}&to=${tomorrow}&token=${encodeURIComponent(key)}`;
+    const r=await fetch(url); const data=await r.json();
+    const rawEvents=data.economicCalendar||data.calendar||[];
+    const events=rawEvents.filter(e=>{
+      const country=(e.country||'').toUpperCase();
+      const event=(e.event||e.title||'').toLowerCase();
+      const impact=(e.impact||e.importance||'').toString().toLowerCase();
+      const relevant=country.includes('US')||country.includes('EU')||country.includes('EMU')||event.includes('ecb')||event.includes('fomc')||event.includes('cpi')||event.includes('nfp')||event.includes('payroll');
+      const high=impact.includes('high')||impact==='3'||event.includes('fomc')||event.includes('nfp')||event.includes('payroll')||event.includes('cpi')||event.includes('interest rate');
+      return relevant&&high;
+    }).map(e=>{
+      const raw=e.time||e.datetime||e.date;
+      const dt=raw?new Date(raw):null;
+      return {...e,dt};
+    }).filter(e=>e.dt&&!isNaN(e.dt)&&e.dt>=now).sort((a,b)=>a.dt-b.dt);
+    const next=events[0];
+    if(!next){liveFeed.nextNews=null;liveFeed.newsBlocked=false;el('nextNewsTime').textContent='Clear';el('nextNewsName').textContent='No high-impact EUR/USD event found';el('newsLockout').textContent='OFF';el('newsLockout').className='big green';return;}
+    const mins=Math.round((next.dt-now)/60000);
+    liveFeed.nextNews=next; liveFeed.newsBlocked=mins>=0&&mins<=60;
+    el('nextNewsTime').textContent=next.dt.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    el('nextNewsName').textContent=(next.event||next.title||'High-impact event')+' · in '+mins+' min';
+    el('newsLockout').textContent=liveFeed.newsBlocked?'ON':'OFF';
+    el('newsLockout').className='big '+(liveFeed.newsBlocked?'red':'green');
+  }catch(err){liveFeed.newsBlocked=false;el('nextNewsTime').textContent='Error';el('nextNewsName').textContent=err.message;el('newsLockout').textContent='Manual';el('newsLockout').className='big amber';}
+}
+function loadApiKeys(){if(el('tdKey'))el('tdKey').value=localStorage.getItem('forex_td_key')||'';if(el('fhKey'))el('fhKey').value=localStorage.getItem('forex_fh_key')||'';}
+function applyPreset(type){
+  if(type==='personal'){
+    el('accountSize').value=2000; el('riskPctInput').value=1; el('maxTradeLoss').value=40; el('maxDayLoss').value=100; el('maxAccountLoss').value=200; el('maxTradesDay').value=2;
+  }
+  if(type==='ftmo10k'){
+    el('accountSize').value=10000; el('riskPctInput').value=0.5; el('maxTradeLoss').value=100; el('maxDayLoss').value=500; el('maxAccountLoss').value=1000; el('maxTradesDay').value=2;
+  }
+  if(type==='ftmo25k'){
+    el('accountSize').value=25000; el('riskPctInput').value=0.5; el('maxTradeLoss').value=250; el('maxDayLoss').value=1250; el('maxAccountLoss').value=2500; el('maxTradesDay').value=2;
+  }
+  if(type==='onepercent'){
+    const acct=num('accountSize')||2000; el('riskPctInput').value=1; el('maxTradeLoss').value=(acct*.01).toFixed(2); el('maxDayLoss').value=(acct*.03).toFixed(2); el('maxAccountLoss').value=(acct*.10).toFixed(2); el('maxTradesDay').value=2;
+  }
+  calculate();
+}
+function updateGuru(checks, hardFail, softFail){
+  const riskScore=(checks[2][1]+checks[3][1]+checks[4][1]+checks[5][1])*25;
+  const structScore=(checks[0][1]+checks[1][1]+checks[7][1])*33.33;
+  const prechecks=[...document.querySelectorAll('.precheck')];
+  const manualDone=prechecks.length?prechecks.filter(x=>x.checked).length/prechecks.length*100:0;
+  const behaviorScore=(checks[6][1]?50:0)+manualDone*.5;
+  const finalScore=Math.round((riskScore*.45)+(structScore*.35)+(behaviorScore*.20));
+  const grade=hardFail?'F':finalScore>=90?'A':finalScore>=75?'B':finalScore>=60?'C':'F';
+  if(el('gRisk')){
+    el('gRisk').textContent=Math.round(riskScore)+'%';
+    el('gStruct').textContent=Math.round(structScore)+'%';
+    el('gBehavior').textContent=Math.round(behaviorScore)+'%';
+    el('gGrade').textContent=grade;
+    el('gGrade').className='value '+(grade==='A'?'green':grade==='B'?'aqua':grade==='C'?'amber':'red');
+    el('guruChecks').innerHTML=checks.map(([t,ok])=>`<div class="check"><span>${t}</span><span class="pill ${ok?'pass':'fail'}">${ok?'PASS':'FAIL'}</span></div>`).join('');
+    let msg='';
+    if(hardFail) msg='⛔ Guru says NO TRADE. This is not a confidence problem — it is a rule violation. Fix the risk, stop, or daily limit first.';
+    else if(softFail) msg='⚠️ Guru says WAIT. The trade may be mathematically possible, but the setup is not clean enough yet. Review TP1, checklist, and news.';
+    else msg='✅ Guru says TRADE IS ALLOWED. Size is controlled, risk is acceptable, and the setup passes the mechanical checks. Now execute without improvising.';
+    el('guruVoice').textContent=msg;
+  }
+}
+function renderJournal(){const closed=journal.filter(t=>t.outcome);const wins=closed.filter(t=>t.pnl>0).length;const pnl=closed.reduce((s,t)=>s+t.pnl,0);el('jTrades').textContent=journal.length;el('jClosed').textContent=closed.length;el('jWinRate').textContent=closed.length?Math.round(wins/closed.length*100)+'%':'—';el('jPnL').textContent=(pnl>=0?'+':'')+money(pnl).replace('$','$');el('jPnL').className='value '+(pnl>=0?'green':'red');el('journalList').innerHTML=journal.length?journal.map((t,i)=>`<div class="entry"><div class="entry-head"><span>#${i+1} ${t.pair} ${t.dir.toUpperCase()}</span><span class="${t.outcome==='sl'?'red':t.outcome?'green':'amber'}">${t.outcome||'PENDING'}</span></div><div class="entry-grid"><div>Entry <span>${fmt(t.entry,t.dec)}</span></div><div>SL <span>${fmt(t.stop,t.dec)}</span></div><div>Risk <span>${money(t.totalRisk)}</span></div><div>Std Lots <span>${fmt(t.stdLots,4)}</span></div><div>Units <span>${t.units.toLocaleString()}</span></div><div>P/L <span>${money(t.pnl||0)}</span></div></div><div class="muted" style="margin-top:6px">${t.date}</div></div>`).reverse().join(''):'<div class="muted">No trades logged.</div>'}
+function markOutcome(){const i=parseInt(el('outcomeIdx').value)-1;if(i<0||i>=journal.length){alert('Enter a valid trade number.');return}const t=journal[i],o=el('outcome').value;const risk=t.totalRisk;const profits=t.targets.map(x=>Math.abs(x.price-t.entry)/pairs[t.pair].pip*pairs[t.pair].pv*t.stdLots);t.outcome=o;t.pnl=o==='sl'?-risk:o==='be'?profits[0]*.5:o==='tp1'?profits[0]*.5:o==='tp2'?profits[0]*.5+profits[1]*.25:profits[0]*.5+profits[1]*.25+profits[2]*.25;localStorage.setItem('forex_cockpit_pro_journal',JSON.stringify(journal));renderJournal()}
+function loadReplay(){const i=parseInt(el('replayIdx').value)-1;el('replayCount').value=journal.length;if(i<0||i>=journal.length){el('replayCard').className='entry replay-card muted';el('replayCard').innerHTML='Enter a valid trade number.';return}const t=journal[i];el('replayCard').className='entry replay-card';el('replayCard').innerHTML=`<div class="entry-head"><span>#${i+1} ${t.pair} ${t.dir.toUpperCase()}</span><span class="${t.outcome==='sl'?'red':t.outcome?'green':'amber'}">${t.outcome||'PENDING'}</span></div><div class="entry-grid"><div>Entry <span>${fmt(t.entry,t.dec)}</span></div><div>SL <span>${fmt(t.stop,t.dec)}</span></div><div>Risk <span>${money(t.totalRisk)}</span></div><div>Stop <span>${fmt(t.stopPips,1)} pips</span></div><div>Units <span>${t.units.toLocaleString()}</span></div><div>P/L <span>${money(t.pnl||0)}</span></div></div><div class="muted" style="margin-top:8px">${t.date}</div>`;el('replayNotes').value=t.notes||''}
+function saveReplayNote(){const i=parseInt(el('replayIdx').value)-1;if(i<0||i>=journal.length){alert('Load a valid trade first.');return}journal[i].notes=el('replayNotes').value;localStorage.setItem('forex_cockpit_pro_journal',JSON.stringify(journal));alert('Replay note saved.')}
+function nextReplay(){const current=parseInt(el('replayIdx').value)||0;el('replayIdx').value=Math.min(current+1,journal.length||1);loadReplay()}
+function renderStats(){const closed=journal.filter(t=>t.outcome);const wins=closed.filter(t=>t.pnl>0),losses=closed.filter(t=>t.pnl<0);const gp=wins.reduce((s,t)=>s+t.pnl,0),gl=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));const pnl=gp-gl;const exp=closed.length?pnl/closed.length:0;const pf=gl?gp/gl:gp?'∞':'—';el('statsGrid').innerHTML=[['Total',journal.length],['Closed',closed.length],['Wins',wins.length],['Losses',losses.length],['Win Rate',closed.length?Math.round(wins.length/closed.length*100)+'%':'—'],['Profit Factor',typeof pf==='number'?pf.toFixed(2):pf],['Expectancy',money(exp)],['Total P/L',money(pnl)]].map(([a,b])=>`<div class="stat"><div class="name">${a}</div><div class="value">${b}</div></div>`).join('');const by={};closed.forEach(t=>{by[t.pair]??={n:0,pnl:0,w:0,l:0};by[t.pair].n++;by[t.pair].pnl+=t.pnl;t.pnl>=0?by[t.pair].w++:by[t.pair].l++});el('pairStats').innerHTML=Object.keys(by).length?Object.entries(by).map(([p,d])=>`<div class="entry"><b>${p}</b> · ${d.n} trades · W:${d.w} L:${d.l} · <span class="${d.pnl>=0?'green':'red'}">${money(d.pnl)}</span></div>`).join(''):'<div class="muted">No closed trades yet.</div>'}
+function calcSwap(){const lots=num('swapLots'),days=num('swapDays'),rate=el('swapDir').value==='long'?num('swapLong'):num('swapShort'),mult=el('swapWed').value==='yes'?days+2:days,total=lots*rate*mult;el('swapResult').className='notice amber show';el('swapResult').innerHTML=`Estimated swap: <b class="${total>=0?'green':'red'}">${money(total)}</b> for ${mult} charged nights.`}
+function exportCSV(){if(!journal.length)return alert('No trades.');const rows=[['#','Date','Pair','Dir','Entry','SL','Risk','StdLots','Units','Outcome','PnL'],...journal.map((t,i)=>[i+1,t.date,t.pair,t.dir,t.entry,t.stop,t.totalRisk,t.stdLots,t.units,t.outcome||'Pending',t.pnl||0])];download('forex_journal.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv')}
+function exportJSON(){download('forex_journal.json',JSON.stringify(journal,null,2),'application/json')}
+function download(name,content,type){const a=document.createElement('a');a.href='data:'+type+';charset=utf-8,'+encodeURIComponent(content);a.download=name;a.click()}
+function clearJournal(){if(confirm('Clear all journal trades?')){journal=[];localStorage.setItem('forex_cockpit_pro_journal','[]');renderJournal()}}
+function toggleTheme(){state.light=!state.light;document.body.classList.toggle('light',state.light);el('themeBtn').textContent=state.light?'☀️':'🌙'}
+function updateClock(){const d=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));const h=d.getHours(),m=d.getMinutes(),day=d.getDay();el('pstTime').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');session('asia',day===0||day<6?(h>=19&&h<23):false);session('lon',day>0&&day<6&&h>=0&&h<5);session('ny',day>0&&day<6&&h>=6&&h<11);checkNews()}
+function session(id,on){el(id+'Box').classList.toggle('open',on);el(id+'Status').textContent=on?'OPEN':'CLOSED'}
+['accountSize','riskPctInput','commission','maxTradeLoss','maxDayLoss','lossToday','maxAccountLoss','maxTradesDay','tradesToday','entry','stop','bufferPips','tp1','tp2','tp3','rr1','rr2','rr3','newsTime','newsDesc'].forEach(id=>setTimeout(()=>el(id)?.addEventListener('input',()=>calculate(false)),0));
+initPairs();loadApiKeys();calculate(false);renderJournal();setInterval(updateClock,10000);setInterval(refreshLivePrice,60000);setInterval(refreshEconomicCalendar,300000);updateClock();if(localStorage.getItem('forex_td_key'))refreshLivePrice();if(localStorage.getItem('forex_fh_key'))refreshEconomicCalendar();
+</script>
+</body>
+</html>
