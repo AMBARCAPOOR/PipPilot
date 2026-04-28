@@ -1,8 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S1EBTJ18P3">
+function sharePipPilot(){
+  trackEvent("share_click");
+  const url=window.location.href;
+  const txt="Check out PipPilot — a forex trade calculator + risk cockpit: "+url;
+  if(navigator.share){navigator.share({title:"PipPilot",text:txt,url:url}).catch(()=>{});}
+  else{navigator.clipboard.writeText(txt);alert("Share text copied to clipboard.");}
+}
+function sendFeedback(){
+  trackEvent("feedback_click");
+  const subject=encodeURIComponent("PipPilot Feedback");
+  const body=encodeURIComponent("Hi Ambar, here is my feedback for PipPilot:%0D%0A%0D%0A");
+  window.location.href="mailto:?subject="+subject+"&body="+body;
+}
+
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S1EBTJ18P3', {
+    debug_mode: true
+  });
+</script>
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S1EBTJ18P3"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S1EBTJ18P3">
+
+</script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -120,11 +148,11 @@
       letter-spacing:.12em;
     }
     .lux-dot { color:#f7d774; padding:0 8px; }
-    .guru-panel {
+    .gugrji-panel {
       border:1px solid rgba(245,158,11,.38);
       background:linear-gradient(135deg, rgba(245,158,11,.10), rgba(34,197,94,.05));
     }
-    .guru-voice {
+    .gugrji-voice {
       font-size:16px;
       line-height:1.6;
       font-weight:850;
@@ -194,7 +222,7 @@
 
   <div class="tabs">
     <button class="tab active" onclick="showTab('calc')">📐 Calc</button>
-    <button class="tab" onclick="showTab('guru')">🧘 Guru</button>
+    <button class="tab" onclick="showTab('gugrji')">🧘 Gugrji</button>
     <button class="tab" onclick="showTab('journal')">📋 Journal</button>
     <button class="tab" onclick="showTab('stats')">📊 Stats</button>
     <button class="tab" onclick="showTab('replay')">🎬 Replay</button>
@@ -317,6 +345,10 @@
           <button onclick="copyLevels()">📋 Copy Levels</button>
           <button class="btn good" onclick="logTrade()">📋 Log Trade</button>
         </div>
+        <div class="form2" style="margin-top:10px">
+          <button onclick="sharePipPilot()">🚀 Share PipPilot</button>
+          <button onclick="sendFeedback()">💬 Feedback</button>
+        </div>
       </div>
 
       <div class="card span4">
@@ -341,10 +373,10 @@
     </div>
   </section>
 
-  <section class="panel" id="tab-guru">
-    <div class="card guru-panel">
-      <div class="section">Guru Discipline Mode</div>
-      <div id="guruVoice" class="guru-voice">Calculate a trade first. Guru mode will call out the obvious mistake before your emotions do.</div>
+  <section class="panel" id="tab-gugrji">
+    <div class="card gugrji-panel">
+      <div class="section">Gugrji Discipline Mode</div>
+      <div id="gugrjiVoice" class="gugrji-voice">Calculate a trade first. Gugrji mode will call out the obvious mistake before your emotions do.</div>
       <div class="section">Discipline Score</div>
       <div class="metrics">
         <div class="metric"><div class="name">Risk Score</div><div class="value" id="gRisk">—</div><div class="hint">Risk and loss limits</div></div>
@@ -352,8 +384,8 @@
         <div class="metric"><div class="name">Behavior Score</div><div class="value" id="gBehavior">—</div><div class="hint">Daily limits + checklist</div></div>
         <div class="metric"><div class="name">Final Grade</div><div class="value" id="gGrade">—</div><div class="hint">A/B/C/F</div></div>
       </div>
-      <div class="section">What Guru Checks</div>
-      <div class="checks" id="guruChecks"></div>
+      <div class="section">What Gugrji Checks</div>
+      <div class="checks" id="gugrjiChecks"></div>
     </div>
     <div class="card">
       <div class="section">Live Feed / Calendar Hooks</div>
@@ -443,7 +475,7 @@
         <b class="amber">USD/JPY:</b> pip value changes with price. Enter the current USD/JPY rate before calculating.<br>
         <b class="amber">XAU/USD:</b> gold margin and pip math vary heavily by broker. Verify contract specs before trading.<br>
         <b class="red">Hard stop:</b> if the tool says NO TRADE because of risk limits, reduce size, widen account buffer, or skip the trade.<br>
-        <b class="aqua">New:</b> Guru mode grades the trade before you enter, prop presets auto-fill common challenge rules, and Replay mode lets you review logged setups later.
+        <b class="aqua">New:</b> Gugrji mode grades the trade before you enter, prop presets auto-fill common challenge rules, and Replay mode lets you review logged setups later.
       </div>
     </div>
   </section>
@@ -451,7 +483,7 @@
 
   <div class="card lux-footer">
     <div class="lux-brand"><span>$</span> Laxmi The Canny Trader <span>€</span></div>
-    <div class="lux-sub">get Regarded! <span class="lux-dot">·</span> Not financial advice <span class="lux-dot">·</span> Verify with your broker</div>
+    <div class="lux-sub">Pips, Precision & Patience <span class="lux-dot">·</span> Not financial advice <span class="lux-dot">·</span> Verify with your broker</div>
     <div class="lux-motto">Discipline → Consistency → Profit</div>
   </div>
 
@@ -471,11 +503,15 @@ const lotUnits={standard:100000,mini:10000,micro:1000,units:1};
 let liveFeed={lastPrice:null,prevPrice:null,lastUpdate:null,nextNews:null,newsBlocked:false};
 function el(id){return document.getElementById(id)}
 function trackEvent(name, params = {}) {
-  if (typeof gtag === "function") {
-    gtag("event", name, {
+  if (typeof window.gtag === "function") {
+    window.gtag("event", name, {
       app_name: "PipPilot",
+      page_path: window.location.pathname,
+      debug_mode: true,
       ...params
     });
+  } else {
+    console.warn("GA4 gtag not loaded yet:", name, params);
   }
 }
 function num(id){const v=parseFloat(el(id).value);return Number.isFinite(v)?v:0}
@@ -517,7 +553,7 @@ function calculate(show=true){
   el('mainStatus').className='status '+(hardFail?'no':softFail?'warn':'ok'); el('mainStatus').textContent=hardFail?'⛔ NO TRADE — rule violation':softFail?'⚠️ CAUTION — review setup':'✅ TRADE ALLOWED';
   checkNews();
   state.last={id:Date.now(),date:new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}),pair:state.pair,dir:state.dir,entry,stop,targets,stopPips,totalRisk,plannedRisk,commission,riskPct:acct?totalRisk/acct*100:0,stdLots,miniLots,microLots,units,mode:state.mode,outcome:null,pnl:0,dec:p.dec,notes:''};
-  updateGuru(checks, hardFail, softFail);
+  updateGugrji(checks, hardFail, softFail);
 }
 function checkNews(){const t=el('newsTime').value,w=el('newsWarn'),desc=el('newsDesc').value||'Red news';if(!t){w.className='notice';w.innerHTML='';return}const now=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));const [h,m]=t.split(':').map(Number);let diff=(h*60+m)-(now.getHours()*60+now.getMinutes());if(diff<0)diff+=1440;if(diff<=60){w.className='notice red show';w.innerHTML=`⛔ DO NOT TRADE — ${desc} in ${diff} min`;}else if(diff<=240){w.className='notice amber show';w.innerHTML=`⚠️ Caution — ${desc} in ${diff} min`;}else{w.className='notice green show';w.innerHTML=`✅ ${desc} outside 4h window`;}}
 function copyLevels(){trackEvent("copy_levels", { pair: state.pair });if(!state.last)return calculate();const t=state.last;const txt=`${t.pair} ${t.dir.toUpperCase()}\nEntry: ${fmt(t.entry,t.dec)}\nSL: ${fmt(t.stop,t.dec)}\nTP1: ${fmt(t.targets[0].price,t.dec)}\nTP2: ${fmt(t.targets[1].price,t.dec)}\nTP3: ${fmt(t.targets[2].price,t.dec)}\nRisk: ${money(t.totalRisk)}\nSize: ${fmt(t.stdLots,4)} std / ${t.units} units`;navigator.clipboard.writeText(txt);alert('Copied trade levels.');}
@@ -599,7 +635,7 @@ function applyPreset(type){
   }
   calculate();
 }
-function updateGuru(checks, hardFail, softFail){
+function updateGugrji(checks, hardFail, softFail){
   const riskScore=(checks[2][1]+checks[3][1]+checks[4][1]+checks[5][1])*25;
   const structScore=(checks[0][1]+checks[1][1]+checks[7][1])*33.33;
   const prechecks=[...document.querySelectorAll('.precheck')];
@@ -613,12 +649,12 @@ function updateGuru(checks, hardFail, softFail){
     el('gBehavior').textContent=Math.round(behaviorScore)+'%';
     el('gGrade').textContent=grade;
     el('gGrade').className='value '+(grade==='A'?'green':grade==='B'?'aqua':grade==='C'?'amber':'red');
-    el('guruChecks').innerHTML=checks.map(([t,ok])=>`<div class="check"><span>${t}</span><span class="pill ${ok?'pass':'fail'}">${ok?'PASS':'FAIL'}</span></div>`).join('');
+    el('gugrjiChecks').innerHTML=checks.map(([t,ok])=>`<div class="check"><span>${t}</span><span class="pill ${ok?'pass':'fail'}">${ok?'PASS':'FAIL'}</span></div>`).join('');
     let msg='';
-    if(hardFail) msg='⛔ Guru says NO TRADE. This is not a confidence problem — it is a rule violation. Fix the risk, stop, or daily limit first.';
-    else if(softFail) msg='⚠️ Guru says WAIT. The trade may be mathematically possible, but the setup is not clean enough yet. Review TP1, checklist, and news.';
-    else msg='✅ Guru says TRADE IS ALLOWED. Size is controlled, risk is acceptable, and the setup passes the mechanical checks. Now execute without improvising.';
-    el('guruVoice').textContent=msg;
+    if(hardFail) msg='⛔ Gugrji says NO TRADE. This is not a confidence problem — it is a rule violation. Fix the risk, stop, or daily limit first.';
+    else if(softFail) msg='⚠️ Gugrji says WAIT. The trade may be mathematically possible, but the setup is not clean enough yet. Review TP1, checklist, and news.';
+    else msg='✅ Gugrji says TRADE IS ALLOWED. Size is controlled, risk is acceptable, and the setup passes the mechanical checks. Now execute without improvising.';
+    el('gugrjiVoice').textContent=msg;
   }
 }
 function renderJournal(){const closed=journal.filter(t=>t.outcome);const wins=closed.filter(t=>t.pnl>0).length;const pnl=closed.reduce((s,t)=>s+t.pnl,0);el('jTrades').textContent=journal.length;el('jClosed').textContent=closed.length;el('jWinRate').textContent=closed.length?Math.round(wins/closed.length*100)+'%':'—';el('jPnL').textContent=(pnl>=0?'+':'')+money(pnl).replace('$','$');el('jPnL').className='value '+(pnl>=0?'green':'red');el('journalList').innerHTML=journal.length?journal.map((t,i)=>`<div class="entry"><div class="entry-head"><span>#${i+1} ${t.pair} ${t.dir.toUpperCase()}</span><span class="${t.outcome==='sl'?'red':t.outcome?'green':'amber'}">${t.outcome||'PENDING'}</span></div><div class="entry-grid"><div>Entry <span>${fmt(t.entry,t.dec)}</span></div><div>SL <span>${fmt(t.stop,t.dec)}</span></div><div>Risk <span>${money(t.totalRisk)}</span></div><div>Std Lots <span>${fmt(t.stdLots,4)}</span></div><div>Units <span>${t.units.toLocaleString()}</span></div><div>P/L <span>${money(t.pnl||0)}</span></div></div><div class="muted" style="margin-top:6px">${t.date}</div></div>`).reverse().join(''):'<div class="muted">No trades logged.</div>'}
